@@ -54,7 +54,7 @@ void moBlobFinderModule::clearBlobs() {
 }
 
 void moBlobFinderModule::applyFilter(IplImage *src) {
-
+	this->storage = cvCreateMemStorage(0);
 	this->clearBlobs();
 	cvCopy(src, this->output_buffer);
 	
@@ -82,7 +82,7 @@ void moBlobFinderModule::applyFilter(IplImage *src) {
 		}
 		cur_cont = cur_cont->h_next;
 	}
-	
+	cvReleaseMemStorage(&this->storage);
     this->output_data->push(this->blobs);
 }
 
