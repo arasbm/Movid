@@ -56,12 +56,17 @@ void mocalibrationmodule_activate_calibration(moProperty *property, void *userda
 		module->resetCalibration();
 }
 
-void mocalibrationmodule_triangulate(moProperty *property, void *userdata)
+void mocalibrationmodule_surfacepoints_changed(moProperty *property, void *userdata)
 {
 	moCalibrationModule *module = static_cast<moCalibrationModule *>(userdata);
 	assert(userdata != NULL);
-	LOG(MO_DEBUG, "Setting triagulate prperty" << property->asBool() << "was: " << module->property("retriangulate").asBool());
-	module->notifyTriangulate();
+	moPointList screenPoints = module->property("screenPoints").asPointList();
+	moPointList surfacePoints = module->property("surfacePoints").asPointList();
+	if (screenPoints.size() == surfacePoints.size()) {
+		module->notifyTriangulate();
+		// The surfacepoints might have been filled in by starting from a preset.
+		module->calibrated = true;
+	}
 }
 
 moCalibrationModule::moCalibrationModule() : moModule(MO_MODULE_INPUT | MO_MODULE_OUTPUT | MO_MODULE_GUI){
@@ -85,7 +90,7 @@ moCalibrationModule::moCalibrationModule() : moModule(MO_MODULE_INPUT | MO_MODUL
 	this->properties["cols"]->addCallback(mocalibrationmodule_update_size, this);
 	this->properties["screenPoints"] = new moProperty(moPointList());
 	this->properties["surfacePoints"] = new moProperty(moPointList());
-	this->properties["surfacePoints"]->addCallback(mocalibrationmodule_triangulate, this);
+	this->properties["surfacePoints"]->addCallback(mocalibrationmodule_surfacepoints_changed, this);
 	this->properties["calibrate"] = new moProperty(false);
 	this->properties["calibrate"]->addCallback(mocalibrationmodule_activate_calibration, this);
 	// Minimum frames that the user has to press a calibration point
@@ -341,8 +346,7 @@ void moCalibrationModule::calibrate() {
 		this->active_point = 0;
 		this->property("calibrate").set(false);
 		this->calibrated = true;
-		//if (this->retriangulate)
-			this->triangulate();
+		this->triangulate();
 		return;
 	}
 
@@ -433,15 +437,11 @@ void moCalibrationModule::transformPoints() {
 		P_transformed.x = alpha*A_screen.x + beta*B_screen.x + gamma*C_screen.x;
 		P_transformed.y = alpha*A_screen.y + beta*B_screen.y + gamma*C_screen.y;
 
-		// TODO This should copy ALL blob attributes, even unknown ones (from different detectors)
-		// Copy the blob, but adjust x/y
+		// This must copy ALL blob attributes, even unknown ones (from different detectors)
+		// Only adjust type, pos.
 		// XXX Do we need to adjust w/h too?
-		moDataGenericContainer *blob = new moDataGenericContainer();
+		moDataGenericContainer *blob = (*it)->clone();
 		blob->properties["type"] = new moProperty("trackedblob");
-		blob->properties["blob_id"] = new moProperty((*it)->properties["blob_id"]->asInteger());
-		blob->properties["implements"] = new moProperty((*it)->properties["implements"]->asString());
-		//blob->properties["w"] = new moProperty((*it)->properties["w"]->asDouble());
-		//blob->properties["h"] = new moProperty((*it)->properties["h"]->asDouble());
 		blob->properties["x"] = new moProperty(P_transformed.x);
 		blob->properties["y"] = new moProperty(P_transformed.y);
 		this->blobs.push_back(blob);
@@ -468,8 +468,11 @@ void moCalibrationModule::update() {
 	if ( calibrate ) {
 		this->calibrate();
 	} else {
-		if (this->calibrated)
+		if (this->calibrated) {
+			if (this->retriangulate)
+				this->triangulate();
 			this->transformPoints();
+		}
 	}
 	this->input->unlock();
 }

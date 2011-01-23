@@ -34,6 +34,7 @@ void moFactory::init() {
 	// Keep the alphabetical order when adding new modules!
 	REGISTER_MODULE(Amplify);
 	REGISTER_MODULE(BackgroundSubtract);
+	REGISTER_MODULE(BinaryMask);
 	REGISTER_MODULE(BlobFinder)
 	REGISTER_MODULE(Calibration);
 	REGISTER_MODULE(Camera);
@@ -43,12 +44,14 @@ void moFactory::init() {
 	REGISTER_MODULE(DistanceTransform);
 	REGISTER_MODULE(Dump);
 	REGISTER_MODULE(Erode);
+	REGISTER_MODULE(EqualizeHist);
 	REGISTER_MODULE(FiducialFinder);
 	REGISTER_MODULE(FingerTipFinder);
 	REGISTER_MODULE(GrayScale);
 	REGISTER_MODULE(GreedyBlobTracker);
 	REGISTER_MODULE(Highpass);
 	REGISTER_MODULE(Hsv);
+	REGISTER_MODULE(HuObjectFinder);
 	REGISTER_MODULE(Image);
 	REGISTER_MODULE(ImageDisplay);
 	REGISTER_MODULE(Invert);

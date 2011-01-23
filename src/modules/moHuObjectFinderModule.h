@@ -16,29 +16,43 @@
  **********************************************************************/
 
 
-#ifndef MO_FIDUCIAL_FINDER_MODULE_H
-#define MO_FIDUCIAL_FINDER_MODULE_H
+#ifndef MO_HUOBJECTFINDER_MODULE_H
+#define MO_HUOBJECTFINDER_MODULE_H
 
+#include <assert.h>
+#include <math.h>
+#include <fstream>
+#include <iostream>
+#include "cv.h"
 #include "../moDataGenericContainer.h"
+#include "../moLog.h"
 #include "../moUtils.h"
 #include "moImageFilterModule.h"
+// Need to get MAX_FIDUCIALS from here:
+#include "moFiducialFinderModule.h"
 
-#define MAX_FIDUCIALS 512
+typedef std::pair<int, bool> match;
 
-class moFiducialFinderModule : public moImageFilterModule {
+class moHuObjectFinderModule : public moImageFilterModule {
 public:
-	moFiducialFinderModule();
-	virtual ~moFiducialFinderModule();
+	moHuObjectFinderModule();
+	virtual ~moHuObjectFinderModule();
+
+	std::vector<CvSeq*> stored_contours;
+	bool contours_restored;
 	
 protected:
-	moDataGenericList fiducials;
+	IplImage* mask;
+	moDataStream* output_mask;
+	void applyFilter(IplImage *);
+	void clearRecognizedObjects();
+	void serializeContour(CvSeq*);
+	float boundingBoxCheck(CvSeq *cont1, CvSeq *cont2, CvBox2D &mar);
+	match findMatchingShape(CvSeq *cont, CvBox2D &mar);
+	moDataGenericList recognized_objects;
 	moDataStream *output_data;
-	
-	void applyFilter(IplImage*);
-	void allocateBuffers();
-	void clearFiducials();
 
-	void *internal;
+	CvMemStorage *storage;
 
 	MODULE_INTERNALS();
 };

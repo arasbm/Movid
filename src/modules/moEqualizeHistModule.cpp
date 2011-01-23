@@ -16,20 +16,24 @@
  **********************************************************************/
 
 
-#ifndef MO_GREEDYBLOBTRACKER_MODULE_H
-#define MO_GREEDYBLOBTRACKER_MODULE_H
+#include <assert.h>
+#include "moEqualizeHistModule.h"
+#include "../moLog.h"
+#include "cv.h"
 
-#include "moAbstractBlobTrackerModule.h"
+MODULE_DECLARE(EqualizeHist, "native", "EqualizeHist an image with one of several filters");
 
-class moGreedyBlobTrackerModule : public moAbstractBlobTrackerModule {
-public:
-	moGreedyBlobTrackerModule();
+moEqualizeHistModule::moEqualizeHistModule() : moImageFilterModule8() {
 
-protected:
-	std::vector<int> reused;
-	virtual void trackBlobs();
-	MODULE_INTERNALS();
-};
+	MODULE_INIT();
 
-#endif
+	// declare properties
+}
+
+moEqualizeHistModule::~moEqualizeHistModule() {
+}
+
+void moEqualizeHistModule::applyFilter(IplImage *src) {
+	cvEqualizeHist(src, this->output_buffer);
+}
 

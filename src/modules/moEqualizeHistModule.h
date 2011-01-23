@@ -16,18 +16,19 @@
  **********************************************************************/
 
 
-#ifndef MO_GREEDYBLOBTRACKER_MODULE_H
-#define MO_GREEDYBLOBTRACKER_MODULE_H
+#ifndef MO_SMOOTH_MODULE_H
+#define MO_SMOOTH_MODULE_H
 
-#include "moAbstractBlobTrackerModule.h"
+#include "moImageFilterModule.h"
 
-class moGreedyBlobTrackerModule : public moAbstractBlobTrackerModule {
+class moEqualizeHistModule : public moImageFilterModule8 {
 public:
-	moGreedyBlobTrackerModule();
-
+	moEqualizeHistModule();
+	virtual ~moEqualizeHistModule();
+	
 protected:
-	std::vector<int> reused;
-	virtual void trackBlobs();
+	void applyFilter(IplImage *);
+
 	MODULE_INTERNALS();
 };
 

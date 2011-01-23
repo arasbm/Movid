@@ -16,18 +16,30 @@
  **********************************************************************/
 
 
-#ifndef MO_GREEDYBLOBTRACKER_MODULE_H
-#define MO_GREEDYBLOBTRACKER_MODULE_H
+#ifndef MO_COMBINE_H
+#define MO_COMBINE_H
 
-#include "moAbstractBlobTrackerModule.h"
+#include "../moModule.h"
+#include "cv.h"
 
-class moGreedyBlobTrackerModule : public moAbstractBlobTrackerModule {
+class moDataStream;
+
+class moBinaryMaskModule : public moModule {
 public:
-	moGreedyBlobTrackerModule();
+	moBinaryMaskModule();
+	virtual ~moBinaryMaskModule();
 
-protected:
-	std::vector<int> reused;
-	virtual void trackBlobs();
+	virtual void notifyData(moDataStream *input);
+
+	void update();
+
+private:
+	moDataStream *input;
+	moDataStream *mask;
+	moDataStream *output;
+	IplImage *output_buffer;
+	IplImage *split;
+
 	MODULE_INTERNALS();
 };
 

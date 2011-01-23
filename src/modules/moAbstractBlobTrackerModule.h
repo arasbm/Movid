@@ -38,11 +38,13 @@ protected:
 	static int id_counter;
 	moDataGenericList* new_blobs;
 	moDataGenericList* old_blobs;
+	moDataGenericList* adolescent;
 
 	moDataStream *input;
 	moDataStream *output;
 
 	virtual void trackBlobs();
+	void trackAngles();
 
 	MODULE_INTERNALS();
 };
