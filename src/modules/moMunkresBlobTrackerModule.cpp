@@ -37,7 +37,7 @@ void moMunkresBlobTrackerModule::trackBlobs() {
 
 	if((sn < DIM_FINGER) || (nn < DIM_FINGER)) {
 		LOGM(MO_ERROR, "Too many blobs for Munkres blob tracker which supports "
-				"up to 32 blobs. Make sure to remove noise and false blobs.")
+				"up to 32 blobs. Make sure to remove noise and false blobs.");
 	}
 
 	int sid[DIM_FINGER];
