@@ -35,8 +35,10 @@ void moMunkresBlobTrackerModule::trackBlobs() {
 	int sn = this->old_blobs->size();
 	int nn = this->new_blobs->size();
 
-	assert(sn < DIM_FINGER);
-	assert(nn < DIM_FINGER);
+	if((sn < DIM_FINGER) || (nn < DIM_FINGER)) {
+		LOGM(MO_ERROR, "Too many blobs for Munkres blob tracker which supports "
+				"up to 32 blobs. Make sure to remove noise and false blobs.")
+	}
 
 	int sid[DIM_FINGER];
 	// The munkres algorithm expects integers since it's doing some optimizations.
