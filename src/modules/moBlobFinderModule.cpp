@@ -66,13 +66,23 @@ void moBlobFinderModule::applyFilter(IplImage *src) {
 
 	// Consider each contour a blob and extract the blob infos from it.
 	int size;
+	int ratio;
 	int min_size = this->property("min_size").asInteger();
 	int max_size = this->property("max_size").asInteger();
 	CvSeq *cur_cont = contours;
 	while (cur_cont != 0) {
 		CvRect rect	= cvBoundingRect(cur_cont, 0);
 		size = rect.width * rect.height;
-		if ((size >= min_size) && (size <= max_size)) {
+
+		// Check ratio to make sure blob can physically represent a finger
+		// magic number 6 is used for now to represent maximum ratio of
+		// Length/thickness of finger
+		if (rect.width < rect.height) {
+			ratio = rect.height / (double)rect.width;
+		} else {
+			ratio = rect.width / (double)rect.height;
+		}
+		if ((ratio <= 6) && (size >= min_size) && (size <= max_size)) {
 			moDataGenericContainer *blob = new moDataGenericContainer();
 			blob->properties["implements"] = new moProperty("pos,size");
 			blob->properties["x"] = new moProperty((rect.x + rect.width / 2) / (double) src->width);
@@ -80,6 +90,7 @@ void moBlobFinderModule::applyFilter(IplImage *src) {
 			blob->properties["width"] = new moProperty(rect.width);
 			blob->properties["height"] = new moProperty(rect.height);
 			this->blobs->push_back(blob);
+			cvRectangle(this->output_buffer, cvPoint(rect.x,rect.y), cvPoint(rect.x + rect.width,rect.x + rect.height), cvScalar(250,10,10), 1);
 		}
 		cur_cont = cur_cont->h_next;
 	}
