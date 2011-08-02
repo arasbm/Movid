@@ -57,6 +57,7 @@ void moFactory::init() {
 	REGISTER_MODULE(Invert);
 	REGISTER_MODULE(Justify);
 	REGISTER_MODULE(Mask);
+	REGISTER_MODULE(MinEigenVal);
 	REGISTER_MODULE(MirrorImage);
 	REGISTER_MODULE(MunkresBlobTracker);
 	REGISTER_MODULE(PeakFinder);

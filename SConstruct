@@ -58,6 +58,7 @@ libmovid_src = [
   'src/modules/moInvertModule.cpp',
   'src/modules/moJustifyModule.cpp',
   'src/modules/moMaskModule.cpp',
+  'src/modules/moMinEigenValModule.cpp',
   'src/modules/moMirrorImageModule.cpp',
   'src/modules/moPeakFinderModule.cpp',
   'src/modules/moPgrCameraModule.cpp',
